@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useMotionValueEvent, useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { VHSTimestamp } from "@/components/VHSTimestamp";
 import { ScrollReveal } from "@/components/ScrollReveal";
@@ -11,7 +11,7 @@ import { GalleryCard } from "@/components/GalleryCard";
 const PROJECTS = [
   {
     title: "Make Me Studio",
-    subtitle: "AI creative studio — video, image & asset generation powered by Veo & Imagen",
+    subtitle: "AI creative studio for video, image & asset generation powered by Veo & Imagen",
     color: "bg-burgundy",
     tags: ["Next.js", "Gemini", "Stripe"],
     href: "https://source-zip.vercel.app",
@@ -25,35 +25,35 @@ const PROJECTS = [
   },
   {
     title: "Olive Shoot",
-    subtitle: "Agentic OS for solopreneurs — tRPC, real-time, AI-native",
+    subtitle: "Agentic OS for solopreneurs. tRPC, real-time, AI-native",
     color: "bg-navy",
     tags: ["Next.js 16", "tRPC", "Zustand"],
     href: "https://olive-shoot.vercel.app",
   },
   {
     title: "Modern Mustard Seed",
-    subtitle: "AI product studio — WebGL MustardTree, voice agent CTA, whitepaper",
+    subtitle: "AI product studio. WebGL MustardTree, voice agent CTA, whitepaper",
     color: "bg-rust",
     tags: ["React", "WebGL", "Vite"],
     href: "https://modernmustardseed.com",
   },
   {
     title: "Ignition",
-    subtitle: "Multi-agent idea-to-income swarm — coordinated AI collaboration",
+    subtitle: "Multi-agent idea-to-income swarm. Coordinated AI collaboration",
     color: "bg-hunter",
     tags: ["Multi-Agent", "Claude", "Gemini"],
     href: "https://ignition-sarah-7990s-projects.vercel.app",
   },
   {
     title: "Kingdom Lab",
-    subtitle: "AI experimentation playground — prototypes & showcases",
+    subtitle: "AI experimentation playground. Prototypes & showcases",
     color: "bg-burgundy",
     tags: ["Next.js", "AI APIs", "Vercel"],
     href: "https://kingdom-lab.vercel.app",
   },
   {
     title: "Alive Notes",
-    subtitle: "An OS for human intention — mobile-first, beautifully crafted",
+    subtitle: "An OS for human intention. Mobile-first, beautifully crafted",
     color: "bg-navy",
     tags: ["Expo", "React Native", "Zustand"],
     href: "https://alive-notes-landing.vercel.app",
@@ -74,21 +74,21 @@ const PROJECTS = [
   },
   {
     title: "The Claw Concierge",
-    subtitle: "Premium setup service — three tiers from $697 to $15K+",
+    subtitle: "Premium setup service. Three tiers from $697 to $15K+",
     color: "bg-burgundy",
     tags: ["Brand", "Service", "Community"],
     href: "https://theclawconcierge.com",
   },
   {
     title: "Upskill Academy",
-    subtitle: "AI workforce development — 25 courses, WIOA-eligible",
+    subtitle: "AI workforce development. 25 courses, WIOA-eligible",
     color: "bg-navy",
     tags: ["React", "Zustand", "Education"],
     href: "https://modern-mustard-seed-academy.vercel.app",
   },
   {
     title: "What Next",
-    subtitle: "AI decision intelligence — scenario modeling & outcome prediction",
+    subtitle: "AI decision intelligence. Scenario modeling & outcome prediction",
     color: "bg-rust",
     tags: ["AI", "Supabase", "TypeScript"],
     href: "https://what-next-ruddy.vercel.app",
@@ -96,7 +96,7 @@ const PROJECTS = [
 ];
 
 const STATS = [
-  { value: "20+", label: "Products Shipped Solo" },
+  { value: "40+", label: "Products Shipped Solo" },
   { value: "2-6 Wks", label: "Idea to Launch" },
   { value: "0", label: "Handoffs Required" },
 ];
@@ -119,20 +119,55 @@ const MARQUEE_WORDS = [
   "SHIPS FAST",
 ];
 
+function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    const duration = 2000;
+    const steps = 60;
+    const increment = target / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        setCount(target);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(current));
+      }
+    }, duration / steps);
+    return () => clearInterval(timer);
+  }, [isInView, target]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+}
+
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: heroProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
+  const { scrollYProgress: pageProgress } = useScroll();
 
-  const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const titleY = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const heroOpacity = useTransform(heroProgress, [0, 1], [1, 0]);
+  const heroScale = useTransform(heroProgress, [0, 1], [1, 1.1]);
+  const heroY = useTransform(heroProgress, [0, 1], [0, 100]);
+  const titleY = useTransform(heroProgress, [0, 1], [0, -60]);
 
   return (
     <main className="relative">
+      {/* ════════════════════════════════════════════
+          SCROLL PROGRESS
+          ════════════════════════════════════════════ */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[2px] bg-gold z-[60] origin-left"
+        style={{ scaleX: pageProgress }}
+      />
+
       {/* ════════════════════════════════════════════
           NAV
           ════════════════════════════════════════════ */}
@@ -247,16 +282,30 @@ export default function Home() {
           ════════════════════════════════════════════ */}
       <section className="border-y border-gold/10 py-10 md:py-14">
         <div className="max-w-4xl mx-auto grid grid-cols-3 gap-8 px-6">
-          {STATS.map((stat, i) => (
-            <ScrollReveal key={stat.label} delay={i * 0.1} direction="none">
-              <div className="text-center">
-                <p className="font-display text-3xl md:text-4xl font-bold text-gold tracking-tight gold-glow">
-                  {stat.value}
-                </p>
-                <p className="vhs-timestamp mt-2">{stat.label}</p>
-              </div>
-            </ScrollReveal>
-          ))}
+          <ScrollReveal direction="none">
+            <div className="text-center">
+              <p className="font-display text-3xl md:text-4xl font-bold text-gold tracking-tight gold-glow">
+                <CountUp target={40} suffix="+" />
+              </p>
+              <p className="vhs-timestamp mt-2">Products Shipped Solo</p>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={0.1} direction="none">
+            <div className="text-center">
+              <p className="font-display text-3xl md:text-4xl font-bold text-gold tracking-tight gold-glow">
+                2-6 Wks
+              </p>
+              <p className="vhs-timestamp mt-2">Idea to Launch</p>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={0.2} direction="none">
+            <div className="text-center">
+              <p className="font-display text-3xl md:text-4xl font-bold text-gold tracking-tight gold-glow">
+                <CountUp target={0} />
+              </p>
+              <p className="vhs-timestamp mt-2">Handoffs Required</p>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -290,7 +339,7 @@ export default function Home() {
               </p>
               <p>
                 I don&apos;t need your spec. I don&apos;t need your wireframes.
-                I need your idea — messy, half-formed, napkin-sketch, whatever.
+                I need your idea. Messy, half-formed, napkin-sketch, whatever.
                 I&apos;ll help you refine it, design the architecture, build
                 every layer of it, and deploy it to production. Frontend,
                 backend, AI, payments, the works. One person, one vision, zero
@@ -299,11 +348,11 @@ export default function Home() {
               <p>
                 Before I wrote my first line of code, I spent fifteen years
                 selling luxury goods, leading teams, and closing $3M+ a year.
-                That instinct — knowing what people want before they can
-                articulate it — is now embedded in every product I build.
+                That instinct, knowing what people want before they can
+                articulate it, is now embedded in every product I build.
               </p>
               <p className="text-gold/60 italic">
-                Self-taught. No CS degree. 20+ live products. Every skill
+                Self-taught. No CS degree. 40+ live products. Every skill
                 earned by shipping.
               </p>
             </div>
@@ -354,28 +403,28 @@ export default function Home() {
               num: "I",
               title: "The Spark",
               tag: "STRATEGY & CLARITY",
-              text: "You have a concept but need clarity. We do a deep-dive strategy session where I learn your vision, audience, and goals. You walk away with a product blueprint, wireframes, tech architecture, and a build roadmap. Your idea goes from foggy to focused — ready to build.",
+              text: "You have a concept but need clarity. We do a deep-dive strategy session where I learn your vision, audience, and goals. You walk away with a product blueprint, wireframes, tech architecture, and a build roadmap. Your idea goes from foggy to focused. Ready to build.",
               includes: ["Product strategy session", "Wireframes & user flow", "Tech architecture plan", "Build roadmap & timeline"],
             },
             {
               num: "II",
               title: "The Website",
               tag: "DESIGN, BUILD & HOST",
-              text: "Need a beautiful, fast website that actually converts? I design and build it from scratch — not a template, not a drag-and-drop. Custom design, mobile-perfect, blazing fast, SEO-ready. Hosted and maintained so you never think about servers. Perfect for businesses, personal brands, and launches.",
+              text: "Need a beautiful, fast website that actually converts? I design and build it from scratch. Not a template, not a drag-and-drop. Custom design, mobile-perfect, blazing fast, SEO-ready. Hosted and maintained so you never think about servers. Perfect for businesses, personal brands, and launches.",
               includes: ["Custom design & development", "Mobile-responsive & SEO-optimized", "Hosting, domain & SSL setup", "Ongoing maintenance available"],
             },
             {
               num: "III",
               title: "The Build",
               tag: "IDEA TO DEPLOYED PRODUCT",
-              text: "This is where ideas become real. I take your concept — whether it's a SaaS app, a marketplace, an AI-powered tool, or a complex system — and build every layer of it. Frontend, backend, AI, payments, auth, the works. Deployed on your domain, ready for real users. Most builds ship in 2–6 weeks.",
+              text: "This is where ideas become real. I take your concept, whether it's a SaaS app, a marketplace, an AI-powered tool, or a complex system, and build every layer of it. Frontend, backend, AI, payments, auth, the works. Deployed on your domain, ready for real users. Most builds ship in 2–6 weeks.",
               includes: ["Full-stack development", "AI & automation integration", "Payments, auth & databases", "Production deployment & launch"],
             },
             {
               num: "IV",
               title: "The Product Partner",
               tag: "FRACTIONAL CTO",
-              text: "Your ongoing technical co-founder — without the equity conversation. I embed in your business for continuous engineering, product strategy, feature development, and scaling. Perfect for founders who need senior-level technical leadership on retainer to keep shipping and growing.",
+              text: "Your ongoing technical co-founder, without the equity conversation. I embed in your business for continuous engineering, product strategy, feature development, and scaling. Perfect for founders who need senior-level technical leadership on retainer to keep shipping and growing.",
               includes: ["Ongoing feature development", "Product strategy & roadmap", "Architecture & scaling", "Team guidance & code review"],
             },
           ].map((pillar, i) => (
@@ -409,7 +458,7 @@ export default function Home() {
 
         <ScrollReveal>
           <p className="text-center text-cream/25 mt-10 font-display italic text-sm">
-            Every project is different. Let&apos;s talk about yours — I&apos;ll put together a custom scope and quote.
+            Every project is different. Let&apos;s talk about yours. I&apos;ll put together a custom scope and quote.
           </p>
         </ScrollReveal>
       </section>
@@ -453,7 +502,7 @@ export default function Home() {
               </h2>
             </div>
             <span className="hidden md:block vhs-timestamp">
-              {PROJECTS.length} OF 20+ PRODUCTS
+              {PROJECTS.length} OF 40+ PRODUCTS
             </span>
           </div>
         </ScrollReveal>
@@ -553,7 +602,7 @@ export default function Home() {
             },
             {
               title: "AI That Actually Works",
-              desc: "Multi-agent systems, voice AI, content generation, RAG. Not a chatbot wrapper — real AI infrastructure.",
+              desc: "Multi-agent systems, voice AI, content generation, RAG. Not a chatbot wrapper. Real AI infrastructure.",
             },
             {
               title: "Experiences That Stop the Scroll",
@@ -605,6 +654,37 @@ export default function Home() {
       </section>
 
       {/* ════════════════════════════════════════════
+          SOCIAL PROOF
+          ════════════════════════════════════════════ */}
+      <section className="py-20 px-6">
+        <ScrollReveal>
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="vhs-timestamp mb-8">TRUSTED BY FOUNDERS, OPERATORS & CREATIVES</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+              {[
+                { metric: "15+", label: "Industries Served" },
+                { metric: "96%", label: "Client Retention" },
+                { metric: "$3M+", label: "Revenue Generated" },
+                { metric: "6", label: "Concurrent Projects" },
+              ].map((item, i) => (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.6 }}
+                  className="text-center"
+                >
+                  <p className="font-display text-2xl md:text-3xl font-bold text-cream/80">{item.metric}</p>
+                  <p className="text-cream/25 text-xs mt-1 font-mono tracking-wider uppercase">{item.label}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </ScrollReveal>
+      </section>
+
+      {/* ════════════════════════════════════════════
           EXPERIENCE TIMELINE
           ════════════════════════════════════════════ */}
       <div className="gold-line mx-24" />
@@ -616,43 +696,43 @@ export default function Home() {
             className="font-display font-bold text-center leading-[0.9] tracking-tight mb-20"
             style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
           >
-            Before the <span className="italic text-gold">Code</span>
+            The <span className="italic text-gold">Origin</span> Story
           </h2>
         </ScrollReveal>
 
         <div className="max-w-3xl mx-auto space-y-0">
           {[
             {
-              year: "2024 — NOW",
+              year: "2024 / NOW",
               role: "Founder & Lead Engineer",
               org: "Modern Mustard Seed",
               detail:
-                "AI-powered product studio. 20+ production apps shipped solo. Full ownership — frontend to agentic infrastructure.",
+                "AI-powered product studio. 40+ production apps shipped solo. Full ownership from frontend to agentic infrastructure.",
               link: "https://modernmustardseed.com",
             },
             {
-              year: "2024 — NOW",
+              year: "2024 / NOW",
               role: "VP of Sales",
               org: "Presidential Title Group",
               detail:
                 "First AI-and-human collaborative title team in the country. Built AI Deal Assistant platform & sales infrastructure across 40+ states.",
             },
             {
-              year: "2019 — 2024",
+              year: "2019 / 2024",
               role: "Founder & Creative Director",
               org: "Unify DeFi",
               detail:
                 "Blockchain consulting, education, and mass adoption strategy. Built community programs from scratch.",
             },
             {
-              year: "2019 — 2023",
+              year: "2019 / 2023",
               role: "Investor & Operator",
               org: "Hello Sunshine Properties",
               detail:
                 "Transformed 26 historic Jacksonville homes into Airbnbs. 96% occupancy, 4.9 rating. Led team of 5. Thrived through COVID.",
             },
             {
-              year: "2008 — 2017",
+              year: "2008 / 2017",
               role: "Designer & Sales Manager",
               org: "Paradise Grilling Systems",
               detail:
@@ -758,7 +838,7 @@ export default function Home() {
           </h2>
           <p className="text-cream/40 max-w-xl mx-auto text-lg mb-4">
             Got an idea you believe in? Tell me about it. I&apos;ll tell you
-            what it takes to make it real — and then I&apos;ll build it. No
+            what it takes to make it real, and then I&apos;ll build it. No
             agencies, no dev teams, no months of waiting. Just you, me, and a
             product that works.
           </p>

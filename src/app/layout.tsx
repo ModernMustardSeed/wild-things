@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "WILD Things — Sarah Scarano | I Turn Ideas Into Products",
-  description: "Fullstack engineer and AI architect who takes your idea from concept to deployed product in weeks. 20+ products shipped solo. Tell me your idea.",
+  description: "Fullstack engineer and AI architect who takes your idea from concept to deployed product in weeks. 40+ products shipped solo. Tell me your idea.",
   icons: { icon: "/favicon.ico" },
 };
 
