@@ -7,6 +7,9 @@ import { VHSTimestamp } from "@/components/VHSTimestamp";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { Marquee } from "@/components/Marquee";
 import { GalleryCard } from "@/components/GalleryCard";
+import { TextScramble } from "@/components/TextScramble";
+import { TiltCard } from "@/components/TiltCard";
+import { MagneticButton } from "@/components/MagneticButton";
 
 const PROJECTS = [
   {
@@ -320,7 +323,7 @@ export default function Home() {
       <section className="relative py-32 px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <ScrollReveal>
-            <p className="vhs-timestamp mb-4">THE BUILDER</p>
+            <p className="vhs-timestamp mb-4"><TextScramble text="THE BUILDER" /></p>
             <h2
               className="font-display font-bold leading-[0.9] tracking-tight mb-8"
               style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
@@ -384,11 +387,55 @@ export default function Home() {
       <div className="gold-line mx-24" />
 
       {/* ════════════════════════════════════════════
+          PROCESS PIPELINE
+          ════════════════════════════════════════════ */}
+      <section className="py-24 px-6 overflow-hidden">
+        <ScrollReveal>
+          <p className="vhs-timestamp text-center mb-12"><TextScramble text="THE PROCESS" /></p>
+        </ScrollReveal>
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+            {[
+              { step: "01", label: "Your Idea", icon: "💡", desc: "Napkin sketch, voice memo, half-thought" },
+              { step: "02", label: "We Talk", icon: "🎯", desc: "I listen, ask questions, see the product" },
+              { step: "03", label: "I Build", icon: "⚡", desc: "Architecture, design, code, every layer" },
+              { step: "04", label: "You Launch", icon: "🚀", desc: "Live, deployed, real users, real revenue" },
+            ].map((item, i) => (
+              <div key={item.step} className="flex items-center">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="text-center flex-shrink-0"
+                >
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border border-gold/20 flex items-center justify-center mx-auto mb-3 hover:border-gold/50 hover:bg-gold/5 transition-all duration-500">
+                    <span className="text-2xl md:text-3xl">{item.icon}</span>
+                  </div>
+                  <p className="font-display font-bold text-sm tracking-wide">{item.label}</p>
+                  <p className="text-cream/25 text-xs mt-1 max-w-[120px] mx-auto">{item.desc}</p>
+                </motion.div>
+                {i < 3 && (
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.15 + 0.3, duration: 0.6 }}
+                    className="hidden md:block w-16 lg:w-24 h-px bg-gradient-to-r from-gold/40 to-gold/10 mx-4 origin-left"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════
           PHILOSOPHY
           ════════════════════════════════════════════ */}
       <section className="py-32 px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <ScrollReveal>
-          <p className="vhs-timestamp text-center mb-4">HOW I WORK</p>
+          <p className="vhs-timestamp text-center mb-4"><TextScramble text="HOW I WORK" /></p>
           <h2
             className="font-display font-bold text-center leading-[0.9] tracking-tight mb-20"
             style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
@@ -493,7 +540,7 @@ export default function Home() {
         <ScrollReveal>
           <div className="flex items-end justify-between mb-16">
             <div>
-              <p className="vhs-timestamp mb-4">THE COLLECTION</p>
+              <p className="vhs-timestamp mb-4"><TextScramble text="THE COLLECTION" /></p>
               <h2
                 className="font-display font-bold leading-[0.9] tracking-tight"
                 style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
@@ -509,16 +556,17 @@ export default function Home() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {PROJECTS.map((item, i) => (
-            <GalleryCard
-              key={item.title}
-              index={i}
-              title={item.title}
-              subtitle={item.subtitle}
-              color={item.color}
-              tags={item.tags}
-              href={item.href}
-              aspect="aspect-[3/4]"
-            />
+            <TiltCard key={item.title}>
+              <GalleryCard
+                index={i}
+                title={item.title}
+                subtitle={item.subtitle}
+                color={item.color}
+                tags={item.tags}
+                href={item.href}
+                aspect="aspect-[3/4]"
+              />
+            </TiltCard>
           ))}
         </div>
 
@@ -585,7 +633,7 @@ export default function Home() {
           ════════════════════════════════════════════ */}
       <section className="py-32 px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <ScrollReveal>
-          <p className="vhs-timestamp text-center mb-4">SERVICES</p>
+          <p className="vhs-timestamp text-center mb-4"><TextScramble text="SERVICES" /></p>
           <h2
             className="font-display font-bold text-center leading-[0.9] tracking-tight mb-20"
             style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
@@ -691,7 +739,7 @@ export default function Home() {
 
       <section className="py-32 px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <ScrollReveal>
-          <p className="vhs-timestamp text-center mb-4">THE JOURNEY</p>
+          <p className="vhs-timestamp text-center mb-4"><TextScramble text="THE JOURNEY" /></p>
           <h2
             className="font-display font-bold text-center leading-[0.9] tracking-tight mb-20"
             style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
@@ -780,7 +828,7 @@ export default function Home() {
 
       <section className="py-24 px-6 md:px-16 lg:px-24 max-w-5xl mx-auto">
         <ScrollReveal>
-          <p className="vhs-timestamp text-center mb-12">TECHNICAL ARSENAL</p>
+          <p className="vhs-timestamp text-center mb-12"><TextScramble text="TECHNICAL ARSENAL" /></p>
         </ScrollReveal>
         <div className="grid md:grid-cols-2 gap-10">
           {[
@@ -848,22 +896,18 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.a
+            <MagneticButton
               href="mailto:sarah@modernmustardseed.com"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-block px-12 py-5 border border-gold/40 text-gold font-display tracking-[0.3em] uppercase text-sm hover:bg-gold/10 transition-colors duration-500"
+              className="inline-block px-12 py-5 border border-gold/40 text-gold font-display tracking-[0.3em] uppercase text-sm hover:bg-gold/10 hover:border-gold/70 hover:shadow-[0_0_30px_rgba(201,168,76,0.15)] transition-all duration-500"
             >
               Book a Free Call
-            </motion.a>
-            <motion.a
+            </MagneticButton>
+            <MagneticButton
               href="/gallery"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-block px-12 py-5 border border-cream/10 text-cream/50 font-display tracking-[0.3em] uppercase text-sm hover:border-cream/30 hover:text-cream/80 transition-colors duration-500"
+              className="inline-block px-12 py-5 border border-cream/10 text-cream/50 font-display tracking-[0.3em] uppercase text-sm hover:border-cream/30 hover:text-cream/80 transition-all duration-500"
             >
               See the Work
-            </motion.a>
+            </MagneticButton>
           </div>
           </div>
         </ScrollReveal>
